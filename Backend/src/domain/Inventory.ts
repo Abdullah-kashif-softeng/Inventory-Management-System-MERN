@@ -1,37 +1,40 @@
+import { ObjectId } from "mongoose";
 
 
 export interface InventoryType{
-    inventoryID:number,
+    id?:string,
     quantityAvailable:number,
     minimumStockLevel:number,
     maximumStockLevel:number,
     reorderPoint:number,
-    productID:number|undefined,
-    warehouseID:number|undefined,
-    shopID:number
+    batchNo?:string|undefined,
+     productID?: string |undefined;   // allow both
+  warehouseID?: string |undefined;
+  shopID: string ;
+    
 }
 
 export class Inventory implements InventoryType{
-    inventoryID:number;
+   id?:string;
     quantityAvailable:number;
     minimumStockLevel:number;
     maximumStockLevel:number;
     reorderPoint:number;
-    productID:number|undefined;
-    warehouseID:number|undefined;
-    shopID:number
+     productID?: string |undefined;   // allow both
+  warehouseID?: string |undefined;
+  shopID: string ;
 
     constructor(data: InventoryType) {
-    if (data.inventoryID <= 0) throw new Error("Invalid Inventory ID");
+    if (!data.id ) throw new Error("Invalid Inventory ID");
     if (data.quantityAvailable < 0) throw new Error("Quantity cannot be negative");
     if (data.minimumStockLevel < 0) throw new Error("Minimum stock cannot be negative");
     if (data.maximumStockLevel < data.minimumStockLevel)
       throw new Error("Maximum stock must be greater than or equal to minimum stock");
     if (data.reorderPoint < data.minimumStockLevel)
       throw new Error("Reorder point must not be less than minimum stock");
-    if (!data.shopID || data.shopID <= 0) throw new Error("Shop ID is required");
+    if (!data.shopID) throw new Error("Shop ID is required");
 
-    this.inventoryID = data.inventoryID;
+    this.id = data.id;
     this.quantityAvailable = data.quantityAvailable;
     this.minimumStockLevel = data.minimumStockLevel;
     this.maximumStockLevel = data.maximumStockLevel;
@@ -64,5 +67,11 @@ export class Inventory implements InventoryType{
 
   isStockFull(): boolean {
     return this.quantityAvailable >= this.maximumStockLevel;
+  }
+
+   getStatus(): string {
+    if (this.isStockLow()) return "Low Stock";
+    if (this.needsReorder()) return "Reorder Needed";
+    return "Healthy";
   }
 }

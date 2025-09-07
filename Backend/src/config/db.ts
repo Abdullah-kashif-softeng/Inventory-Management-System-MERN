@@ -1,21 +1,15 @@
-import sql from "mssql/msnodesqlv8";
+import mongoose from "mongoose";
 
+const URL="mongodb://127.0.0.1:27017/inventorymanagementsystem";
 
+mongoose.connect(URL);
 
-export const dbConfig: sql.config = {
-  server: "LHRLT-11639\\MSSQLSERVER1",
-  database: "inventoryDb",
-  driver: "msnodesqlv8",
-  options: {
-    trustedConnection: true
+const db=mongoose.connection;
+db.on("connected",()=>console.log("Connected to MongoDB"));
+db.on("disconnected",()=>console.log("Disconnected from MongoDB"));
+db.on("error",(err)=>console.log("Error connecting to MongoDB",err));
 
-
-
-  }
-};
-export { sql };
-
-
+export default db;
 
 
 
