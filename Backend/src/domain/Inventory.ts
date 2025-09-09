@@ -1,39 +1,27 @@
+// domain/Inventory.ts
 import { ObjectId } from "mongoose";
-
-
-export interface InventoryType{
-    id?:string,
-    quantityAvailable:number,
-    minimumStockLevel:number,
-    maximumStockLevel:number,
-    reorderPoint:number,
-    batchNo?:string|undefined,
-     productID?: string |undefined;   // allow both
-  warehouseID?: string |undefined;
-  shopID: string ;
-    
+export interface InventoryType {
+  id?: string|undefined;
+  quantityAvailable: number;
+  minimumStockLevel: number;
+  maximumStockLevel: number;
+  reorderPoint: number;
+  productID?: string|undefined|ObjectId;
+  warehouseID?: string|undefined|ObjectId;
+  shopID: string|ObjectId;
 }
 
-export class Inventory implements InventoryType{
-   id?:string;
-    quantityAvailable:number;
-    minimumStockLevel:number;
-    maximumStockLevel:number;
-    reorderPoint:number;
-     productID?: string |undefined;   // allow both
-  warehouseID?: string |undefined;
-  shopID: string ;
+export class Inventory {
+  id?: string|undefined;
+  quantityAvailable: number;
+  minimumStockLevel: number;
+  maximumStockLevel: number;
+  reorderPoint: number;
+  productID?: string|undefined|ObjectId;
+  warehouseID?: string|undefined|ObjectId;
+  shopID: string|ObjectId;
 
-    constructor(data: InventoryType) {
-    if (!data.id ) throw new Error("Invalid Inventory ID");
-    if (data.quantityAvailable < 0) throw new Error("Quantity cannot be negative");
-    if (data.minimumStockLevel < 0) throw new Error("Minimum stock cannot be negative");
-    if (data.maximumStockLevel < data.minimumStockLevel)
-      throw new Error("Maximum stock must be greater than or equal to minimum stock");
-    if (data.reorderPoint < data.minimumStockLevel)
-      throw new Error("Reorder point must not be less than minimum stock");
-    if (!data.shopID) throw new Error("Shop ID is required");
-
+  constructor(data: InventoryType) {
     this.id = data.id;
     this.quantityAvailable = data.quantityAvailable;
     this.minimumStockLevel = data.minimumStockLevel;
@@ -43,35 +31,16 @@ export class Inventory implements InventoryType{
     this.warehouseID = data.warehouseID;
     this.shopID = data.shopID;
   }
-   increaseQuantity(amount: number) {
-    if (amount <= 0) throw new Error("Increase amount must be positive");
-    if (this.quantityAvailable + amount > this.maximumStockLevel)
-      throw new Error("Cannot exceed maximum stock level");
+
+  increase(amount: number) {
     this.quantityAvailable += amount;
   }
 
-  decreaseQuantity(amount: number) {
-    if (amount <= 0) throw new Error("Decrease amount must be positive");
-    if (this.quantityAvailable - amount < 0)
-      throw new Error("Cannot reduce below zero");
+  decrease(amount: number) {
     this.quantityAvailable -= amount;
   }
 
   needsReorder(): boolean {
     return this.quantityAvailable <= this.reorderPoint;
-  }
-
-  isStockLow(): boolean {
-    return this.quantityAvailable <= this.minimumStockLevel;
-  }
-
-  isStockFull(): boolean {
-    return this.quantityAvailable >= this.maximumStockLevel;
-  }
-
-   getStatus(): string {
-    if (this.isStockLow()) return "Low Stock";
-    if (this.needsReorder()) return "Reorder Needed";
-    return "Healthy";
   }
 }

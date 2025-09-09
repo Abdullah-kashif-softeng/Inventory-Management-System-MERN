@@ -1,10 +1,13 @@
-// src/usecases/inventory/DeleteInventory.ts
-import { InventoryRepository } from "../../repositories/interfaces/IInventoryRepositry";
+// usecases/DeleteInventory.ts
+import { MongoInventoryRepository } from "../../repositories/mongo/MongoInventoryRepository";
+
 
 export class DeleteInventory {
-  constructor(private inventoryRepo: InventoryRepository) {}
+  constructor(private repo: MongoInventoryRepository) {}
 
-  async execute(inventoryID: number): Promise<void> {
-    return this.inventoryRepo.delete(inventoryID);
+  async execute(id: string) {
+    if (!id) throw new Error("Inventory ID is required");
+
+    return await this.repo.delete(id);
   }
 }
