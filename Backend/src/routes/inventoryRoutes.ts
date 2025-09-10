@@ -1,18 +1,21 @@
-// routes/inventoryRoutes.ts
-import express from "express";
+// src/routes/inventoryRoutes.ts
+import { Router } from "express";
 import { InventoryController } from "../controllers/InventoryController";
+import { MongoInventoryRepository } from "../repositories/mongo/MongoInventoryRepository";
 
-const router= express.Router();
-const controller = new InventoryController();
+const router = Router();
 
-router.post("/", (req, res) => controller.create(req, res));
-router.put("/:id", (req, res) => controller.update(req, res));
-router.delete("/:id", (req, res) => controller.delete(req, res));
-router.get("/:id", (req, res) => controller.get(req, res));
-router.get("/", (req, res) => controller.getAll(req, res));
-router.post("/:id/increase", (req, res) => controller.increaseStock(req, res));
-router.post("/:id/decrease", (req, res) => controller.decreaseStock(req, res));
-router.get("/:id/reorder", (req, res) => controller.checkReorder(req, res));
-//router.get("/:id/status", (req, res) => controller.getStatus(req, res));
+// inject dependency (DIP)
+const repo = new MongoInventoryRepository();
+const controller = new InventoryController(repo);
+
+router.post("/", controller.create.bind(controller));
+router.put("/:id", controller.update.bind(controller));
+router.delete("/:id", controller.delete.bind(controller));
+router.get("/:id", controller.get.bind(controller));
+router.get("/", controller.getAll.bind(controller));
+router.patch("/:id/increase", controller.increaseStock.bind(controller));
+router.patch("/:id/decrease", controller.decreaseStock.bind(controller));
+router.get("/:id/reorder", controller.checkReorder.bind(controller));
 
 export default router;

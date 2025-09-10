@@ -1,14 +1,10 @@
-import { ProductType } from "../../domain/Product"
+// src/repositories/interfaces/IProductRepository.ts
+import { ProductType } from "../../domain/Product";
 
 export interface ProductRepository {
   create(product: ProductType): Promise<ProductType>;
   update(product: ProductType): Promise<ProductType>;
-  delete(productID: number): Promise<void>;
-  findById(productID: number): Promise<ProductType | null>;
+  delete(productID: string): Promise<void>;  // ✅ string
+  findById(productID: string): Promise<ProductType | null>;  // ✅ string
   findAll(): Promise<ProductType[]>;
 }
-
-
-
-
-

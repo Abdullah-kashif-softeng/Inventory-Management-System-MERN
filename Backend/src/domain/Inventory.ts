@@ -6,9 +6,9 @@ export interface InventoryType {
   minimumStockLevel: number;
   maximumStockLevel: number;
   reorderPoint: number;
-  productID?: string|undefined|ObjectId;
-  warehouseID?: string|undefined|ObjectId;
-  shopID: string|ObjectId;
+  productID?: string|undefined|null;
+  warehouseID?: string|undefined|null;
+  shopID: string;
 }
 
 export class Inventory {
@@ -17,9 +17,9 @@ export class Inventory {
   minimumStockLevel: number;
   maximumStockLevel: number;
   reorderPoint: number;
-  productID?: string|undefined|ObjectId;
-  warehouseID?: string|undefined|ObjectId;
-  shopID: string|ObjectId;
+  productID?: string|undefined|null;
+  warehouseID?: string|undefined|null;
+  shopID: string;
 
   constructor(data: InventoryType) {
     this.id = data.id;

@@ -1,23 +1,12 @@
+// src/usecases/product/CreateProduct.ts
 import { ProductRepository } from "../../repositories/interfaces/IProductRepositry";
-import { ProductType } from "../../domain/Product";
-
-
-
-
-
-
+import { ProductType, Product } from "../../domain/Product";
 
 export class CreateProduct {
-  constructor(private productRepo: ProductRepository) {}
+  constructor(private repo: ProductRepository) {}
 
-  async execute(product: ProductType): Promise<ProductType> {
-    return this.productRepo.create(product);
+  async execute(data: ProductType):Promise<ProductType> {
+    const entity = new Product(data);
+    return await this.repo.create(entity);
   }
 }
-
-
-
-
-
-
-

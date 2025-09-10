@@ -1,7 +1,6 @@
-// controllers/InventoryController.ts
+// src/controllers/InventoryController.ts
 import { Request, Response } from "express";
-
-import { MongoInventoryRepository } from "../repositories/mongo/MongoInventoryRepository";
+import { IInventoryRepository } from "../repositories/interfaces/IInventoryRepositry";
 
 import { CreateInventory } from "../usecases/inventory/CreateInventory";
 import { UpdateInventory } from "../usecases/inventory/UpdateInventory";
@@ -11,25 +10,17 @@ import { GetAllInventories } from "../usecases/inventory/GetAllInventories";
 import { IncreaseStock } from "../usecases/inventory/IncreaseStock";
 import { DecreaseStock } from "../usecases/inventory/DecreaseStock";
 import { CheckReorder } from "../usecases/inventory/CheckReorder";
-// import { GetStockStatus } from "../usecases/GetStockStatus";
-function normalizeInventory(inv: any) {
-  return {
-    ...inv,
-    id: inv.id?.toString(),
-    shopID: inv.shopID?.toString(),
-    productID: inv.productID?.toString(),
-    warehouseID: inv.warehouseID?.toString(),
-  };
-}
+
+import { normalizeInventory } from "../utils/normalizers";
 
 export class InventoryController {
-  private repo = new MongoInventoryRepository();
+  constructor(private repo: IInventoryRepository) {}
 
   async create(req: Request, res: Response) {
     try {
       const usecase = new CreateInventory(this.repo);
       const result = await usecase.execute(req.body);
-      res.status(201).json(normalizeInventory(result)); // result);
+      res.status(201).json(normalizeInventory(result));
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -58,14 +49,14 @@ export class InventoryController {
     }
   }
 
- async get(req: Request, res: Response) {
+  async get(req: Request, res: Response) {
     try {
       const { id } = req.params;
       if (!id) throw new Error("Inventory ID is required");
 
       const usecase = new GetInventory(this.repo);
       const result = await usecase.execute(id);
-      res.json(normalizeInventory(result));
+      res.json(result ? normalizeInventory(result) : null);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -75,13 +66,13 @@ export class InventoryController {
     try {
       const usecase = new GetAllInventories(this.repo);
       const result = await usecase.execute();
-      res.json(normalizeInventory(result));
+      res.json(result.map(normalizeInventory));
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-   async increaseStock(req: Request, res: Response) {
+  async increaseStock(req: Request, res: Response) {
     try {
       const { id } = req.params;
       if (!id) throw new Error("Inventory ID is required");
@@ -95,7 +86,9 @@ export class InventoryController {
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
-  }async decreaseStock(req: Request, res: Response) {
+  }
+
+  async decreaseStock(req: Request, res: Response) {
     try {
       const { id } = req.params;
       if (!id) throw new Error("Inventory ID is required");
@@ -123,13 +116,4 @@ export class InventoryController {
       res.status(400).json({ error: error.message });
     }
   }
-//   async getStatus(req: Request, res: Response) {
-//     try {
-//       const usecase = new GetStockStatus(this.repo);
-//       const result = await usecase.execute(req.params.id);
-//       res.json({ status: result });
-//     } catch (error: any) {
-//       res.status(400).json({ error: error.message });
-//     }
-//   }
 }

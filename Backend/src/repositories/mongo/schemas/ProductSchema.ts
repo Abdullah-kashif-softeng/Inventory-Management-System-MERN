@@ -1,36 +1,25 @@
 
 import mongoose from "mongoose";
+import { ProductType } from "../../../domain/Product";
 
-export interface Product{
-     productID: number;
-    productCode: string;
-    barCode: string;
-    productName: string;
-    productDescription: string;
-    reorderQuantity: number;
-    packedWeight: number | undefined;
-    packedHeight: number | undefined;
-    packedDepth: number | undefined;
-    packedWidth: number | undefined;
-    refrigerated: boolean;
-    productCategoryID: number;
-    productSubCategoryID: number;
-}
 
-const ProductScehma=new mongoose.Schema<Product>({
-    productID: { type: Number, required: true },
+const ProductSchema = new mongoose.Schema<ProductType>(
+  {
+    productID: { type: String, required: true }, // stored as string
     productCode: { type: String, required: true },
     barCode: { type: String, required: true },
-    productName: { type: String, required: true },
-    productDescription: { type: String, required: true },
-    reorderQuantity: { type: Number, required: true },
-    packedWeight: { type: Number, required: true },
-    packedHeight: { type: Number, required: true },
-    packedDepth: { type: Number, required: true },
-    packedWidth: { type: Number, required: true },
+    productName: { type: String, required: true, maxlength: 100 },
+    productDescription: { type: String, required: true, maxlength: 2000 },
+    reorderQuantity: { type: Number, required: true, min: 0 },
+    packedWeight: { type: Number, default: null },
+    packedHeight: { type: Number, default: null },
+    packedDepth: { type: Number, default: null },
+    packedWidth: { type: Number, default: null },
     refrigerated: { type: Boolean, required: true },
-    productCategoryID: { type: Number, required: true },
-    productSubCategoryID: { type: Number, required: true },
-});
+    productCategoryID: { type: String, required: true },
+    productSubCategoryID: { type: String, required: true }
+  },
+  { timestamps: true }
+);
 
-export default mongoose.model<Product>("Product", ProductScehma);
+export default mongoose.model<ProductType>("Product", ProductSchema);
