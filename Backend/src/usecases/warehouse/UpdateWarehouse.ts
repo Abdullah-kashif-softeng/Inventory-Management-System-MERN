@@ -1,11 +1,16 @@
-// src/usecases/warehouse/UpdateWarehouse.ts
-import { WarehouseRepository } from "../../repositories/interfaces/IWarehouseRepositry";
-import { WarehouseType } from "../../domain/Warehouse";
+import { IWarehouseRepository } from "../../repositories/interfaces/IWarehouseRepositry";
+import { WarehouseType, Warehouse } from "../../domain/Warehouse";
 
 export class UpdateWarehouse {
-  constructor(private warehouseRepo: WarehouseRepository) {}
+  constructor(private repo: IWarehouseRepository) {}
 
-  async execute(warehouse: WarehouseType): Promise<WarehouseType> {
-    return this.warehouseRepo.update(warehouse);
+  async execute(id:string, data: WarehouseType) {
+    if (id) throw new Error("Warehouse ID is required");
+
+    const existing = await this.repo.findById(id);
+    if (!existing) throw new Error("Warehouse not found");
+
+    const entity = new Warehouse({ ...existing, ...data });
+    return await this.repo.update(id, entity);
   }
 }

@@ -6,21 +6,21 @@ import { ProductType } from "../../domain/Product";
 export class MongoProductRepository implements ProductRepository {
   async create(product: ProductType): Promise<ProductType> {
     const doc = await ProductModel.create(product);
-    return doc.toObject() as unknown as ProductType;
+    return doc.toObject() as ProductType;
   }
 
-  async update(product: ProductType): Promise<ProductType> {
-    if (!product.productID) throw new Error("Product ID is required");
+  async update(id:string, product: ProductType): Promise<ProductType> {
+    if (!id) throw new Error("Product ID is required");
 
     const doc = await ProductModel.findByIdAndUpdate(
-      product.productID,
+      id,
       product,
       { new: true }
     );
 
     if (!doc) throw new Error("Product not found");
 
-    return doc.toObject() as unknown as ProductType;
+    return doc.toObject() as ProductType;
   }
 
   async delete(id: string): Promise<void> {
@@ -30,11 +30,11 @@ export class MongoProductRepository implements ProductRepository {
 
   async findById(id: string): Promise<ProductType | null> {
     const doc = await ProductModel.findById(id);
-    return doc ? (doc.toObject() as unknown as ProductType) : null;
+    return doc ? (doc.toObject()as ProductType) : null;
   }
 
   async findAll(): Promise<ProductType[]> {
     const docs = await ProductModel.find();
-    return docs.map((d) => d.toObject() as unknown as ProductType);
+    return docs.map((d) => d.toObject() as ProductType);
   }
 }

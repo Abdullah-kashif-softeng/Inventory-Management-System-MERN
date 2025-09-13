@@ -1,10 +1,11 @@
 // usecases/CheckReorder.ts
-import { MongoInventoryRepository } from "../../repositories/mongo/MongoInventoryRepository";
+
 
 import { Inventory } from "../../domain/Inventory";
+import { IInventoryRepository } from '../../repositories/interfaces/IInventoryRepositry';
 
 export class CheckReorder {
-  constructor(private repo: MongoInventoryRepository) {}
+  constructor(private repo: IInventoryRepository) {}
 
   async execute(id: string): Promise<boolean> {
     const existing = await this.repo.findById(id);

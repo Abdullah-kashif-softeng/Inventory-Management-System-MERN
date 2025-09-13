@@ -9,13 +9,32 @@ const router = Router();
 const repo = new MongoInventoryRepository();
 const controller = new InventoryController(repo);
 
-router.post("/", controller.create.bind(controller));
-router.put("/:id", controller.update.bind(controller));
-router.delete("/:id", controller.delete.bind(controller));
-router.get("/:id", controller.get.bind(controller));
-router.get("/", controller.getAll.bind(controller));
-router.patch("/:id/increase", controller.increaseStock.bind(controller));
-router.patch("/:id/decrease", controller.decreaseStock.bind(controller));
-router.get("/:id/reorder", controller.checkReorder.bind(controller));
+import { auth, authorize } from "../middlewares/auth";
+
+
+// === CRUD ===
+
+// Manager+ can create/update inventory
+router.post("/", auth, authorize(["manager", "admin"]), controller.create.bind(controller));
+router.put("/:id", auth, authorize(["manager", "admin"]), controller.update.bind(controller));
+
+// Admin only delete
+router.delete("/:id", auth, authorize(["admin"]), controller.delete.bind(controller));
+
+// Employees+ can view stock
+router.get("/:id", auth, authorize(["employee", "manager", "admin"]), controller.get.bind(controller));
+router.get("/", auth, authorize(["employee", "manager", "admin"]), controller.getAll.bind(controller));
+
+// === Domain Behaviors ===
+
+// Employees+ can adjust stock
+router.patch("/:id/increase", auth, authorize(["employee", "manager", "admin"]), controller.increaseStock.bind(controller));
+router.patch("/:id/decrease", auth, authorize(["employee", "manager", "admin"]), controller.decreaseStock.bind(controller));
+
+// Employees+ can check reorder
+router.get("/:id/reorder", auth, authorize(["employee", "manager", "admin"]), controller.checkReorder.bind(controller));
+
+
+
 
 export default router;

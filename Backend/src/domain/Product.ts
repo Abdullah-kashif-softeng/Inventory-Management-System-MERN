@@ -1,6 +1,8 @@
 // src/domain/Product.ts
+import { Types } from "mongoose";
+
 export interface ProductType {
-  productID: string | number;
+
   productCode: string;
   barCode: string;
   productName: string;
@@ -11,12 +13,13 @@ export interface ProductType {
   packedDepth?: number|undefined;
   packedWidth?: number|undefined;
   refrigerated: boolean;
-  productCategoryID: number|string;
-  productSubCategoryID: number|string;
+  productCategoryID: string|Types.ObjectId;
+  productSubCategoryID: string|Types.ObjectId;
+  providerID:string|Types.ObjectId;
 }
 
 export class Product implements ProductType {
-  productID: string | number;
+  
   productCode: string;
   barCode: string;
   productName: string;
@@ -27,12 +30,12 @@ export class Product implements ProductType {
   packedDepth?: number|undefined;
   packedWidth?: number|undefined;
   refrigerated: boolean;
-  productCategoryID: number|string;
-  productSubCategoryID: number|string;
-
+  productCategoryID:string|Types.ObjectId;
+  productSubCategoryID: string|Types.ObjectId;
+  providerID:string|Types.ObjectId;
   constructor(data: ProductType) {
     // === Validations ===
-    if (!data.productID) throw new Error("Product ID required");
+    
     if (!data.productName.trim()) throw new Error("Product name required");
     if (data.productName.length > 100) throw new Error("Name too long");
     if (!data.barCode.trim()) throw new Error("Product barcode required");
@@ -49,7 +52,7 @@ export class Product implements ProductType {
     if (!data.productCategoryID) throw new Error("Missing productCategoryID");
 
     // === Assignments ===
-    this.productID = data.productID;
+   
     this.productCode = data.productCode.trim();
     this.barCode = data.barCode.trim();
     this.productName = data.productName.trim();
@@ -62,6 +65,7 @@ export class Product implements ProductType {
     this.refrigerated = data.refrigerated;
     this.productCategoryID = data.productCategoryID;
     this.productSubCategoryID = data.productSubCategoryID;
+    this.providerID=data.providerID
   }
 
   // === Behaviors / Methods ===

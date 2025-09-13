@@ -1,10 +1,10 @@
-// src/usecases/warehouse/DeleteWarehouse.ts
-import { WarehouseRepository } from "../../repositories/interfaces/IWarehouseRepositry";
+import { IWarehouseRepository } from "../../repositories/interfaces/IWarehouseRepositry";
 
 export class DeleteWarehouse {
-  constructor(private warehouseRepo: WarehouseRepository) {}
+  constructor(private repo: IWarehouseRepository) {}
 
-  async execute(warehouseID: number): Promise<void> {
-    return this.warehouseRepo.delete(warehouseID);
+  async execute(id: string) {
+    if (!id) throw new Error("Warehouse ID is required");
+    return await this.repo.delete(id);
   }
 }

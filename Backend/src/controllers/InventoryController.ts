@@ -28,8 +28,10 @@ export class InventoryController {
 
   async update(req: Request, res: Response) {
     try {
+      const {id}=req.params
+      if(!id) throw new Error("Id not given")
       const usecase = new UpdateInventory(this.repo);
-      const result = await usecase.execute({ ...req.body, id: req.params.id });
+      const result = await usecase.execute(id,req.body);
       res.json(normalizeInventory(result));
     } catch (error: any) {
       res.status(400).json({ error: error.message });

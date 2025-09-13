@@ -1,57 +1,49 @@
+import { Types } from "mongoose";
 
-
-
-
-
-
-
-
-
-export interface WarehouseType{
-    warehouseID:number,
-    warehouseName:string,
-    isRefrigerated:boolean,
-    locationID:number|undefined
+export interface WarehouseType {
+       // Mongo _id
+  warehouseCode: string;
+  warehouseName: string;
+  locationID: string | Types.ObjectId; // reference to Location
+  capacity?: number|undefined;
+  description?: string|undefined;
+  isActive: boolean;
 }
 
-export class Warehouse implements WarehouseType{
+export class Warehouse implements WarehouseType {
 
+  warehouseCode: string;
+  warehouseName: string;
+  locationID: string | Types.ObjectId;
+  capacity?: number | undefined;
+  description?: string|undefined;
+  isActive: boolean;
 
-    warehouseID:number;
-    warehouseName:string;
-    isRefrigerated:boolean;
-    locationID:number|undefined;
-
-
-constructor(data:WarehouseType){
+  constructor(data: WarehouseType) {
+    if (!data.warehouseCode?.trim()) throw new Error("Warehouse code is required");
+    if (!data.warehouseName?.trim()) throw new Error("Warehouse name is required");
+    if (!data.locationID) throw new Error("Location ID is required");
+    if (data.capacity !== undefined && data.capacity < 0) throw new Error("Capacity cannot be negative");
     
+    this.warehouseCode = data.warehouseCode.trim();
+    this.warehouseName = data.warehouseName.trim();
+    this.locationID = data.locationID;
+    this.capacity = data.capacity;          // ✅ safe now
+    this.description = data.description;
+    this.isActive = data.isActive;
+  }
 
-  if (!data.warehouseName?.trim()) throw new Error("Warehouse name required");
-  if (data.warehouseName.length > 100) throw new Error("Name too long");
-  if (data.warehouseID <= 0) throw new Error("Invalid warehouse ID");
-  if (data.locationID !== undefined && data.locationID <= 0) throw new Error("Invalid location ID");
 
+  rename(newName: string) {
+    if (!newName.trim()) throw new Error("Warehouse name cannot be empty");
+    this.warehouseName = newName.trim();
+  }
 
-    this.isRefrigerated=data.isRefrigerated;
-    this.warehouseName=data.warehouseName;
-    this.warehouseID=data.warehouseID;
-    this.locationID=data.locationID;
+  deactivate() {
+    this.isActive = false;
+  }
+
+  activate() {
+    this.isActive = true;
+  }
 }
-
-
-
-
-
-
-rename(newName: string) {
-  if (!newName.trim()) throw new Error("Name required");
-  if (newName.length > 100) throw new Error("Name too long");
-  this.warehouseName = newName;
-}
-
-moveToLocation(newLocationId: number) {
-  if (newLocationId <= 0) throw new Error("Invalid location ID");
-  this.locationID = newLocationId;
-}
-}
-

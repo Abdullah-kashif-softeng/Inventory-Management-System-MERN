@@ -1,9 +1,9 @@
 import { WarehouseType } from "../../domain/Warehouse";
 
-export interface WarehouseRepository {
+export interface IWarehouseRepository {
   create(warehouse: WarehouseType): Promise<WarehouseType>;
-  update(warehouse: WarehouseType): Promise<WarehouseType>;
-  delete(warehouseID: number): Promise<void>;
-  findById(warehouseID: number): Promise<WarehouseType | null>;
+  update(id:string, warehouse: WarehouseType): Promise<WarehouseType>;
+  delete(id: string): Promise<void>;
+  findById(id: string): Promise<WarehouseType | null>;
   findAll(): Promise<WarehouseType[]>;
 }

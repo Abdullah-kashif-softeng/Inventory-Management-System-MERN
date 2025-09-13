@@ -1,11 +1,27 @@
 
-import mongoose from "mongoose";
+import mongoose, { Schema,Types,Document } from "mongoose";
 import { ProductType } from "../../../domain/Product";
 
 
-const ProductSchema = new mongoose.Schema<ProductType>(
+export interface ProductDocument extends Document {
+  
+  productCode: string;
+  barCode: string;
+  productName: string;
+  productDescription: string;
+  reorderQuantity: number;
+  packedWeight?: number|undefined;
+  packedHeight?: number|undefined;
+  packedDepth?: number|undefined;
+  packedWidth?: number|undefined;
+  refrigerated: boolean;
+  productCategoryID: Types.ObjectId;
+  productSubCategoryID: Types.ObjectId;
+  providerID:Types.ObjectId;
+}
+const ProductSchema = new mongoose.Schema<ProductDocument>(
   {
-    productID: { type: String, required: true }, // stored as string
+   
     productCode: { type: String, required: true },
     barCode: { type: String, required: true },
     productName: { type: String, required: true, maxlength: 100 },
@@ -16,10 +32,12 @@ const ProductSchema = new mongoose.Schema<ProductType>(
     packedDepth: { type: Number, default: null },
     packedWidth: { type: Number, default: null },
     refrigerated: { type: Boolean, required: true },
-    productCategoryID: { type: String, required: true },
-    productSubCategoryID: { type: String, required: true }
+    productCategoryID: { type: Schema.Types.ObjectId, ref: "ProductCategory", required: true },
+productSubCategoryID: { type: Schema.Types.ObjectId, ref: "ProductSubCategory", required: true },
+providerID: { type: Schema.Types.ObjectId, ref: "Provider", required: true }
+
   },
   { timestamps: true }
 );
 
-export default mongoose.model<ProductType>("Product", ProductSchema);
+export default mongoose.model<ProductDocument>("Product", ProductSchema);

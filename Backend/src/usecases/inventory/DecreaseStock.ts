@@ -1,10 +1,10 @@
 // usecases/DecreaseStock.ts
-import { MongoInventoryRepository } from "../../repositories/mongo/MongoInventoryRepository";
+import { IInventoryRepository } from "../../repositories/interfaces/IInventoryRepositry";
 
 import { Inventory } from "../../domain/Inventory";
 
 export class DecreaseStock {
-  constructor(private repo: MongoInventoryRepository) {}
+  constructor(private repo:   IInventoryRepository) {}
 
   async execute(id: string, amount: number) {
     if (amount <= 0) throw new Error("Decrease amount must be positive");
@@ -15,6 +15,6 @@ export class DecreaseStock {
     const entity = new Inventory(existing);
     entity.decrease(amount);
 
-    return await this.repo.update({ ...entity, id });
+    return await this.repo.update(id,entity);
   }
 }

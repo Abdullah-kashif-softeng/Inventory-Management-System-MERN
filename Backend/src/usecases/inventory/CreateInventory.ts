@@ -1,9 +1,10 @@
 // usecases/CreateInventory.ts
-import { MongoInventoryRepository} from "../../repositories/mongo/MongoInventoryRepository";
+
 import { Inventory, InventoryType } from "../../domain/Inventory";
+import { IInventoryRepository } from '../../repositories/interfaces/IInventoryRepositry';
 
 export class CreateInventory {
-  constructor(private repo: MongoInventoryRepository) {}
+  constructor(private repo: IInventoryRepository) {}
 
   async execute(data: InventoryType) {
     if (!data.shopID) throw new Error("Shop ID is required");

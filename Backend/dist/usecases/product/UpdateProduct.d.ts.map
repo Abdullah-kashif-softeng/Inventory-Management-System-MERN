@@ -1,0 +1,1 @@
+{"version":3,"file":"UpdateProduct.d.ts","sourceRoot":"","sources":["../../../src/usecases/product/UpdateProduct.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,iBAAiB,EAAE,MAAM,iDAAiD,CAAC;AACpF,OAAO,EAAE,WAAW,EAAE,MAAM,sBAAsB,CAAC;AAEnD,qBAAa,aAAa;IACZ,OAAO,CAAC,WAAW;gBAAX,WAAW,EAAE,iBAAiB;IAE5C,OAAO,CAAC,OAAO,EAAE,WAAW,GAAG,OAAO,CAAC,WAAW,CAAC;CAG1D"}

@@ -9,6 +9,11 @@ import { GetProduct } from "../usecases/product/GetProduct";
 import { GetAllProducts } from "../usecases/product/GetAllProducts";
 
 import { normalizeProduct } from "../utils/normalizers";
+import { RenameProduct } from '../usecases/product/RenameProduct';
+
+import { UpdateProductDescription } from '../usecases/product/UpdateProductDescription';
+
+import { SetReorderQuantity } from '../usecases/product/SetReorderQuantity';
 
 export class ProductController {
   constructor(private repo: ProductRepository) {}
@@ -24,17 +29,18 @@ export class ProductController {
   }
 
   async update(req: Request, res: Response) {
-    try {
-      const usecase = new UpdateProduct(this.repo);
-      const result = await usecase.execute({
-        ...req.body,
-        productID: req.params.id,
-      });
-      res.json(normalizeProduct(result));
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
-    }
+  try {
+    const { id } = req.params;  // ✅ correct destructuring
+    if (!id) throw new Error("Product ID is required");
+    
+    const usecase = new UpdateProduct(this.repo);
+    const result = await usecase.execute(id, req.body);
+    res.json(normalizeProduct(result));
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
   }
+}
+
 
   async delete(req: Request, res: Response) {
     try {
@@ -70,5 +76,56 @@ export class ProductController {
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
+  }
+  async renameProduct(req:Request,res:Response){
+      try {
+         const { id } = req.params;
+      const { newName } = req.body;
+
+      if (!id) throw new Error("Warehouse ID is required");
+      if (!newName) throw new Error("New name is required");
+
+
+        const usecase=new RenameProduct(this.repo)
+        const result=await usecase.execute(id,newName)
+
+        res.json(normalizeProduct(result))
+      } catch (error:any) {
+        res.status(400).json({error:error.message})
+      }
+  }
+
+  async updateProductDescription(req:Request,res:Response){
+    try{
+      
+      const {id}=req.params
+      const {desc}=req.body
+
+      if(!id) throw new Error("The id is must to update")
+      
+      if(!desc) throw new Error("The description must be given")
+      const usecase=new UpdateProductDescription(this.repo)
+      const result=await usecase.execute(id,desc)
+      res.status(200).json(normalizeProduct(result))
+    }catch(err:any){
+     res.status(400).json({error:err.message})
+    }
+  }
+
+  async setReorderQuantity(req:Request,res:Response){
+    try{
+       const {id}=req.params
+       const {qty}=req.body
+
+       if(!id) throw new Error("The id is needed")
+       if(!qty) throw new Error("The qty is empty")
+      
+        const usecase=new SetReorderQuantity(this.repo)
+        const result=await usecase.execute(id,qty)
+        res.status(200).json(normalizeProduct(result))
+  }
+  catch(err:any){
+    res.status(400).json({error:err.message})
+  }
   }
 }

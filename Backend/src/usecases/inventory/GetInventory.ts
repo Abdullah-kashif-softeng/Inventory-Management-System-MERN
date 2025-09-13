@@ -1,9 +1,10 @@
+import { IInventoryRepository } from '../../repositories/interfaces/IInventoryRepositry';
 // usecases/GetInventory.ts
-import { MongoInventoryRepository } from "../../repositories/mongo/MongoInventoryRepository";
+
 
 
 export class GetInventory {
-  constructor(private repo: MongoInventoryRepository) {}
+  constructor(private repo: IInventoryRepository) {}
 
   async execute(id: string) {
     if (!id) throw new Error("Inventory ID is required");
