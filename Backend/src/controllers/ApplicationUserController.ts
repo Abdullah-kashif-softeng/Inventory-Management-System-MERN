@@ -37,7 +37,7 @@ async update(req:Request,res:Response){
     if(!id) throw new Error("The id is required")
 
     const usecase=new UpdateApplicationUser(this.repo)
-    const result=usecase.execute(id,req.body);
+    const result=await usecase.execute(id,req.body);
     res.status(200).json(normalizeApplicationUser(result))
 }catch(error:any){
      res.status(400).json({error:error.message})
@@ -50,7 +50,7 @@ async delete(req:Request,res:Response){
     if(!id) throw new Error("The id is required")
 
     const usecase=new DeleteUser(this.repo)
-    const result=usecase.execute(id)
+    const result=await usecase.execute(id)
     res.status(200).json({msg:"The user is deleted successfully"})
 
     } catch (error:any) {
@@ -64,7 +64,7 @@ async get(req:Request,res:Response){
             if(!id) throw new Error("The id is required")
 
         const usecase=new GetUser(this.repo)
-        const result=usecase.execute(id)
+        const result=await usecase.execute(id)
             res.status(200).json(normalizeApplicationUser(result))
 
     } catch (error:any) {
